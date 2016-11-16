@@ -7,6 +7,8 @@
 //
 
 #import "ViewController.h"
+#import <pthread.h>
+
 
 @interface ViewController ()
 
@@ -16,14 +18,21 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
 }
 
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+void *func()
+{
+    for (int i = 0; i <5000; i++) {
+        NSLog(@"%d\n", i);
+    }
+    return NULL;
 }
 
-
+- (IBAction)clickBtn:(id)sender {
+    pthread_t thread;
+    pthread_create(&thread, NULL, func, NULL);
+//    for (int i = 0; i <5000; i++) {
+//        NSLog(@"%d\n", i);
+//    }
+}
 @end
