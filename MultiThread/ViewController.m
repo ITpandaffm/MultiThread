@@ -36,26 +36,17 @@ void *func()
 //        NSLog(@"%d\n", i);
 //    }
     NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(run:) object:@"helloThread"];
+    
+    
     [thread start];
-    if ([NSThread currentThread].isMainThread)
-    {
-        NSLog(@"我就是主线程啊哈哈哈哈");
-    } else
-    {
-        NSLog(@"我才不是主线程呢");
-    }
+    NSLog(@"%@, %lu",[NSThread mainThread], [NSThread mainThread].stackSize/1024);
+
 }
 
 - (void)run:(NSString *)prarmater
 {
     NSLog(@"roger the prarmater: %@", prarmater);
-    if ([NSThread currentThread].isMainThread)
-    {
-        NSLog(@"我在run方法 我是主线程");
-    } else
-    {
-        NSLog(@"我在run方法 我不是主线程");
-    }
+    NSLog(@"我是线程%@, 我的栈大小为%lu", [NSThread currentThread], (unsigned long)[NSThread currentThread].stackSize/1024);
 }
 
 @end
