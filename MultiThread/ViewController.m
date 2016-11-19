@@ -112,6 +112,9 @@
     NSBlockOperation *blockOperation2 = [NSBlockOperation blockOperationWithBlock:^{
         [self runThread:@"blockOperation222"];
     }];
+    [invocationOperation setCompletionBlock:^{
+        NSLog(@"invocationOperation已经执行完毕啦~");
+    }];
 //    [blockOperation start];
     
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
