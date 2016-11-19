@@ -74,6 +74,10 @@
 //        });
 //    });
     
+    
+/*
+ dispatch_t_group
+ 
     __block UIImage *image;
     __block UIImage *image2;
     
@@ -82,21 +86,42 @@
         NSURL *url = [NSURL URLWithString:@"http://kaoyan1v1.mymsgk.cn/UploadFiles/xinxi/2016/7/201607041336074106.jpg"];
                 NSData *data = [NSData dataWithContentsOfURL:url];
                 image = [UIImage imageWithData:data];
-
+        
     });
     
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSURL *url = [NSURL URLWithString:@"https://www.baidu.com/img/bd_logo1.png"];
                 NSData *data = [NSData dataWithContentsOfURL:url];
                 image2 = [UIImage imageWithData:data];
-
+        
     });
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
         self.image.image = image;
         self.image2.image = image2;
     });
+*/
+    NSInvocationOperation *invocationOperation = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(runThread:) object:@"我是黄楚琦七七七七七七"];
     
+//    [invocationOperation start];
+    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+        [self runThread:@"blockOperation"];
+    }];
+    [blockOperation addExecutionBlock:^{
+        NSLog(@"啦啦啦拉阿拉德玛西亚%@", [NSThread currentThread]);
+    }];
+    NSBlockOperation *blockOperation2 = [NSBlockOperation blockOperationWithBlock:^{
+        [self runThread:@"blockOperation222"];
+    }];
+//    [blockOperation start];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = 2;
+
+    [queue addOperation:invocationOperation];
+    [queue addOperation:blockOperation];
+    [queue addOperation:blockOperation2];
 }
+
 
 - (void)pthreadTest
 {
