@@ -14,14 +14,77 @@
 @property (weak, nonatomic) IBOutlet UIImageView *image;
 @property (weak, nonatomic) IBOutlet UIImageView *image2;
 
+@property (nonatomic, assign) int ticketCount;
+@property (nonatomic, strong) NSLock *lock;
+
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-  
+    self.ticketCount = 20;
+    self.lock = [[NSLock alloc] init];
 }
+
+- (IBAction)threadNSLocl:(id)sender {
+    NSThread *sellTicket1 = [[NSThread alloc] initWithTarget:self selector:@selector(sellTicket) object:nil];
+    NSThread *sellTicket2 = [[NSThread alloc] initWithTarget:self selector:@selector(sellTicket) object:nil];
+    
+    [sellTicket1 start];
+    [sellTicket2 start];
+}
+
+- (void)sellTicket
+{
+    
+    while (self.ticketCount > 0)
+    {
+        [self.lock lock];
+        if (self.ticketCount > 0) {
+            self.ticketCount--;
+            NSLog(@"%@卖出了一张票，还剩%d",[NSThread currentThread],self.ticketCount);
+        }
+        [self.lock unlock];
+    }
+}
+
+- (IBAction)threadSychconized:(id)sender
+{
+
+    NSBlockOperation *sellTicket1 = [NSBlockOperation blockOperationWithBlock:^{
+        while (self.ticketCount > 0) {
+            @synchronized (self) {
+                if (self.ticketCount>0) {
+                    self.ticketCount--;
+                    NSLog(@"%@卖出了一张票, 当前还剩下%d", [NSThread currentThread],self.ticketCount );
+                }
+               
+            }
+        }
+    }];
+    
+    NSBlockOperation *sellTicket2 = [NSBlockOperation blockOperationWithBlock:^{
+        while (self.ticketCount > 0)
+        {
+            @synchronized (self) {
+                if (self.ticketCount>0) {
+                    self.ticketCount--;
+                    NSLog(@"%@卖出了一张票,当前还剩下%d", [NSThread currentThread], self.ticketCount);
+                }
+        
+            }
+    
+        }
+    }];
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:sellTicket1];
+    [queue addOperation:sellTicket2];
+    
+}
+
+
+
 
 - (IBAction)clickBtn:(id)sender {
     //GCD
